@@ -19,9 +19,6 @@ public class ValidatorISBNTest {
     }
 
 
-
-
-
     @Test
     public void checkAValidISBN(){
         boolean result = validator.checkISBN("0140449116");
@@ -43,5 +40,12 @@ public class ValidatorISBNTest {
         validator.checkISBN("123456789");
 
     }
+
+    @Test(expected=NumberFormatException.class)
+    public void nonNumericISBNsAreNotAllowed(){
+
+        validator.checkISBN("helloworld");
+    }
+
 
 }

@@ -15,6 +15,7 @@ public class ValidatorISBN {
 
         for(int i= 0; i<10 ;i++){
 
+            if(!Character.isDigit(isbnNumber.charAt(i))) throw new NumberFormatException("ISBN number can only contain numeric digits");
             total+= isbnNumber.charAt(i) * (10-i);
         }
         return total % 11 == 0;
