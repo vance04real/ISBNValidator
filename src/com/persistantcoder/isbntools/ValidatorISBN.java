@@ -22,7 +22,7 @@ public class ValidatorISBN {
                     throw new NumberFormatException("ISBN number can only contain numeric digits");
                 }
             }else{
-                total+= isbnNumber.charAt(i) * (10-i);
+                total+= Character.getNumericValue(isbnNumber.charAt(i) ) * (10-i);
             }
 
         }
