@@ -3,6 +3,7 @@ package com.persistantcoder.isbntools;
 import org.junit.Before;
 import org.junit.Test;
 
+
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
@@ -20,7 +21,7 @@ public class ValidatorISBNTest {
 
 
     @Test
-    public void checkAValidISBN(){
+    public void checkTenDigitValidISBN(){
         boolean result = validator.checkISBN("0140449116");
         assertTrue("first value",result);
         result = validator.checkISBN("0140177396");
@@ -29,7 +30,17 @@ public class ValidatorISBNTest {
     }
 
     @Test
-    public void ISBNsEndingInAnXAreValid(){
+    public void checkValidThirteenDigitISBNNumber(){
+
+        boolean result=  validator.checkISBN("9781118771334");
+        assertTrue(result);
+
+        result=  validator.checkISBN("9780134685991");
+        assertTrue(result);
+    }
+
+    @Test
+    public void TenDigitISBNsEndingInAnXAreValid(){
 
         boolean result = validator.checkISBN("012000030X");
         assertTrue(result);
@@ -37,7 +48,16 @@ public class ValidatorISBNTest {
     }
 
     @Test
-    public void checkAnInvalidISBN(){
+    public void checkAThirteenDigitInvalidISBN(){
+
+        boolean result = validator.checkISBN("9780134685999");
+        assertFalse(result);
+    }
+
+
+
+    @Test
+    public void checkATenDigitInvalidISBN(){
 
         boolean result = validator.checkISBN("0140449117");
         assertFalse(result);
@@ -54,6 +74,7 @@ public class ValidatorISBNTest {
 
         validator.checkISBN("helloworld");
     }
+
 
 
 }
