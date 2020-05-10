@@ -7,15 +7,21 @@ import com.persistantcoder.isbntools.api.ISBNDataServiceApi;
  **/
 public class StockManager {
 
-    private ISBNDataServiceApi serviceApi;
+    private ISBNDataServiceApi webservice;
+    private ISBNDataServiceApi databaseServiceApi;
 
-    public void setIsbnDataServiceApi(ISBNDataServiceApi isbnDataServiceApi) {
-        this.serviceApi = isbnDataServiceApi;
+    public void setDatabaseServiceApi(ISBNDataServiceApi databaseServiceApi) {
+        this.databaseServiceApi = databaseServiceApi;
+    }
+
+    public void setWebService(ISBNDataServiceApi isbnDataServiceApi) {
+        this.webservice = isbnDataServiceApi;
     }
 
     public String getLocatorCode(String isbn) {
+        Book book = databaseServiceApi.lookup(isbn);
+        if(book == null)book=webservice.lookup(isbn);
 
-        Book book = serviceApi.lookup(isbn);
         StringBuilder  builder = new StringBuilder();
         builder.append(isbn.substring(isbn.length()-4));
         builder.append(book.getAuthor().substring(0,1));

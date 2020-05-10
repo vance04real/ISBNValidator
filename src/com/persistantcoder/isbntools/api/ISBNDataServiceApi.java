@@ -7,5 +7,5 @@ import com.persistantcoder.isbntools.Book;
  **/
 public interface ISBNDataServiceApi {
 
-public Book lookup (String isbn);
+ Book lookup (String isbn);
 }
