@@ -1,6 +1,7 @@
 package com.persistantcoder.isbntools;
 
 import com.persistantcoder.isbntools.api.ISBNDataServiceApi;
+import org.junit.Before;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
@@ -12,29 +13,26 @@ import static org.mockito.Matchers.anyString;
  **/
 public class StockManagementTests {
 
-    private ISBNDataServiceApi webService;
+    private ISBNDataServiceApi testWebService;
+    StockManager stockManager;
+    ISBNDataServiceApi testDatabaseService;
+
+    @Before
+    public void setUp() {
+        testWebService = mock(ISBNDataServiceApi.class);
+        stockManager = new StockManager();
+        stockManager.setWebService(testWebService);
+        testDatabaseService = mock(ISBNDataServiceApi.class);
+        stockManager.setDatabaseServiceApi(testDatabaseService);
+
+    }
+
 
     @Test
     public void testCanGetACorrectLocaterCode() {
+        when(testWebService.lookup(anyString())).thenReturn(new Book("0140177396", "Of Mice and Men", "J Steinbeck"));
 
-        ISBNDataServiceApi testwebservice = new ISBNDataServiceApi() {
-            @Override
-            public Book lookup(String isbn) {
-                return new Book(isbn, "Of Mice and Men", "J Steinbeck");
-            }
-        };
-
-        ISBNDataServiceApi testDatabase = new ISBNDataServiceApi() {
-            @Override
-            public Book lookup(String isbn) {
-                return null;
-            }
-        };
-
-
-        StockManager stockManager = new StockManager();
-        stockManager.setWebService(testwebservice);
-        stockManager.setDatabaseServiceApi(testDatabase);
+        when(testWebService.lookup(anyString())).thenReturn(null);
 
         String isbn = "0140177396";
         String locatorCode = stockManager.getLocatorCode(isbn);
@@ -44,41 +42,27 @@ public class StockManagementTests {
 
     @Test
     public void databaseIsUsedIfDataIsPresent() {
-
-        ISBNDataServiceApi dataService = mock(ISBNDataServiceApi.class);
-        ISBNDataServiceApi webService = mock(ISBNDataServiceApi.class);
-
-        when(dataService.lookup("0140177396")).thenReturn(new Book("0140177396","The Life and times of Evans","Evans K F C"));
-        StockManager stockManager = new StockManager();
-        stockManager.setWebService(dataService);
-        stockManager.setDatabaseServiceApi(webService);
+        when(testDatabaseService.lookup("0140177396")).thenReturn(new Book("0140177396", "The Life and times of Evans", "Evans K F C"));
 
         String isbn = "0140177396";
         String locatorCode = stockManager.getLocatorCode(isbn);
 
-        verify(dataService,times(1)).lookup("0140177396");
-        verify(webService,times(0)).lookup("");
+        verify(testDatabaseService, times(1)).lookup("0140177396");
+        verify(testWebService, never()).lookup("");
 
 
     }
 
     @Test
     public void webserviceIsUsedIfDataIsNotPresentInDatabase() {
-        ISBNDataServiceApi dataService = mock(ISBNDataServiceApi.class);
-        ISBNDataServiceApi webService = mock(ISBNDataServiceApi.class);
-
-        when(dataService.lookup("0140177396")).thenReturn(null);
-        when(webService.lookup("0140177396")).thenReturn(new Book("0140177396","The Life and times of Evans","Evans K F C"));
-
-        StockManager stockManager = new StockManager();
-        stockManager.setWebService(dataService);
-        stockManager.setDatabaseServiceApi(webService);
+        when(testDatabaseService.lookup("0140177396")).thenReturn(null);
+        when(testWebService.lookup("0140177396")).thenReturn(new Book("0140177396", "The Life and times of Evans", "Evans K F C"));
 
         String isbn = "0140177396";
         String locatorCode = stockManager.getLocatorCode(isbn);
 
-       // verify(dataService,times(1)).lookup("0140177396");
-        verify(webService,times(1)).lookup("0140177396");
+        // verify(dataService,times(1)).lookup("0140177396");
+        verify(testWebService, times(1)).lookup("0140177396");
     }
 
 }
